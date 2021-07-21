@@ -59,7 +59,6 @@ export interface StackedBarChartProps extends AbstractChartProps {
     y: number;
   }) => void;
 
-
   /**
    * Percentage of the chart height, dedicated to vertical labels
    * (space below chart)
@@ -132,28 +131,28 @@ class StackedBarChart extends AbstractChart<
             barWidth / 2) *
           fac;
 
-          const onPress = () => {
-            if (!onDataPointClick) {
-              return;
-            }
-    
-            onDataPointClick({
-              index: i,
-              value: 0,
-              data: data,
-              x: xC,
-              y: y
-            });
+        const onPress = () => {
+          if (!onDataPointClick) {
+            return;
+          }
 
-            // onDataPointClick({
-            //   index: i,
-            //   value: x,
-            //   data,
-            //   x: cx,
-            //   y: cy
-            // });
-          };
-          
+          onDataPointClick({
+            index: i,
+            value: 0,
+            data: data,
+            x: xC,
+            y: y
+          });
+
+          // onDataPointClick({
+          //   index: i,
+          //   value: x,
+          //   data,
+          //   x: cx,
+          //   y: cy
+          // });
+        };
+
         ret.push(
           <Rect
             key={Math.random()}
@@ -235,6 +234,7 @@ class StackedBarChart extends AbstractChart<
       segments = 4,
       decimalPlaces,
       percentile = false,
+      onDataPointClick,
       verticalLabelsHeightPercentage = DEFAULT_X_LABELS_HEIGHT_PERCENTAGE,
       formatYLabel = (yLabel: string) => {
         return yLabel;
