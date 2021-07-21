@@ -21,6 +21,7 @@
     "inlineSources": true,
     "esModuleInterop": true,
     "noErrorTruncation": true,
+    "skipLibCheck": true,
     "jsx": "react-native"
   }
 }

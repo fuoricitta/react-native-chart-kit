@@ -50,7 +50,7 @@ export interface BarChartProps extends AbstractChartProps {
   onDataPointClick?: (data: {
     index: number;
     value: number;
-    dataset: ChartData;
+    data: number[];
     x: number;
     y: number;
   }) => void;
