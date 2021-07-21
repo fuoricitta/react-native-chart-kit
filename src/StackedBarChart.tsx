@@ -7,6 +7,7 @@ import AbstractChart, {
   AbstractChartProps,
   DEFAULT_X_LABELS_HEIGHT_PERCENTAGE
 } from "./AbstractChart";
+import { ChartData } from "./HelperTypes";
 
 export interface StackedBarChartData {
   labels: string[];
@@ -50,6 +51,15 @@ export interface StackedBarChartProps extends AbstractChartProps {
 
   percentile?: boolean;
 
+  onDataPointClick?: (data: {
+    index: number;
+    value: number;
+    data: number[][];
+    x: number;
+    y: number;
+  }) => void;
+
+
   /**
    * Percentage of the chart height, dedicated to vertical labels
    * (space below chart)
@@ -85,6 +95,7 @@ class StackedBarChart extends AbstractChart<
     border,
     colors,
     stackedBar = false,
+    onDataPointClick,
     verticalLabelsHeightPercentage
   }: Pick<
     Omit<AbstractChartConfig, "data">,
@@ -98,6 +109,7 @@ class StackedBarChart extends AbstractChart<
     border: number;
     colors: string[];
     data: number[][];
+    onDataPointClick: StackedBarChartProps["onDataPointClick"];
   }) =>
     data.map((x, i) => {
       const barWidth = 32 * this.getBarPercentage();
@@ -120,6 +132,28 @@ class StackedBarChart extends AbstractChart<
             barWidth / 2) *
           fac;
 
+          const onPress = () => {
+            if (!onDataPointClick) {
+              return;
+            }
+    
+            onDataPointClick({
+              index: i,
+              value: 0,
+              data: data,
+              x: xC,
+              y: y
+            });
+
+            // onDataPointClick({
+            //   index: i,
+            //   value: x,
+            //   data,
+            //   x: cx,
+            //   y: cy
+            // });
+          };
+          
         ret.push(
           <Rect
             key={Math.random()}
@@ -129,6 +163,7 @@ class StackedBarChart extends AbstractChart<
             ry={this.getBarRadius(ret, x)}
             width={barWidth}
             height={h}
+            onPress={onPress}
             fill={colors[z]}
           />
         );
@@ -288,6 +323,7 @@ class StackedBarChart extends AbstractChart<
               border,
               colors: this.props.data.barColors,
               paddingTop,
+              onDataPointClick: onDataPointClick,
               paddingRight: paddingRight + 20,
               stackedBar,
               verticalLabelsHeightPercentage
