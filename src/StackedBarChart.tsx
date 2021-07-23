@@ -14,6 +14,7 @@ export interface StackedBarChartData {
   legend: string[];
   data: number[][];
   barColors: string[];
+  selectedBarColors: string[];
 }
 
 export interface StackedBarChartProps extends AbstractChartProps {
@@ -36,6 +37,7 @@ export interface StackedBarChartProps extends AbstractChartProps {
   style?: Partial<ViewStyle>;
   barPercentage?: number;
   decimalPlaces?: number;
+  selectedIndex?: number;
   /**
    * Show vertical labels - default: True.
    */
@@ -53,7 +55,7 @@ export interface StackedBarChartProps extends AbstractChartProps {
 
   onDataPointClick?: (data: {
     index: number;
-    value: number;
+    value: number[];
     data: number[][];
     x: number;
     y: number;
@@ -93,7 +95,9 @@ class StackedBarChart extends AbstractChart<
     paddingRight,
     border,
     colors,
+    selectedColors,
     stackedBar = false,
+    selectedIndex,
     onDataPointClick,
     verticalLabelsHeightPercentage
   }: Pick<
@@ -107,7 +111,9 @@ class StackedBarChart extends AbstractChart<
   > & {
     border: number;
     colors: string[];
+    selectedColors: string[];
     data: number[][];
+    selectedIndex: number;
     onDataPointClick: StackedBarChartProps["onDataPointClick"];
   }) =>
     data.map((x, i) => {
@@ -126,10 +132,7 @@ class StackedBarChart extends AbstractChart<
         h = barsAreaHeight * (x[z] / sum);
         const y = barsAreaHeight - h + st;
         const xC =
-          (paddingRight +
-            (i * (width - paddingRight)) / data.length +
-            barWidth / 2) *
-          fac;
+          (4 + (i * (width - paddingRight)) / data.length + barWidth / 2) * fac;
 
         const onPress = () => {
           if (!onDataPointClick) {
@@ -138,7 +141,7 @@ class StackedBarChart extends AbstractChart<
 
           onDataPointClick({
             index: i,
-            value: 0,
+            value: x,
             data: data,
             x: xC,
             y: y
@@ -163,7 +166,11 @@ class StackedBarChart extends AbstractChart<
             width={barWidth}
             height={h}
             onPress={onPress}
-            fill={colors[z]}
+            fill={
+              selectedIndex == undefined || selectedIndex == i
+                ? selectedColors[z]
+                : colors[z]
+            }
           />
         );
 
@@ -176,7 +183,7 @@ class StackedBarChart extends AbstractChart<
               y={h > 15 ? y + 15 : y + 7}
               {...this.getPropsForLabels()}
             >
-              {x[z]}
+              {/* {x[z]} */}
             </Text>
           );
         }
@@ -221,7 +228,7 @@ class StackedBarChart extends AbstractChart<
 
   render() {
     const paddingTop = 15;
-    const paddingRight = 50;
+    const paddingRight = 0;
     const barWidth = 32 * this.getBarPercentage();
 
     const {
@@ -234,6 +241,7 @@ class StackedBarChart extends AbstractChart<
       segments = 4,
       decimalPlaces,
       percentile = false,
+      selectedIndex,
       onDataPointClick,
       verticalLabelsHeightPercentage = DEFAULT_X_LABELS_HEIGHT_PERCENTAGE,
       formatYLabel = (yLabel: string) => {
@@ -308,7 +316,7 @@ class StackedBarChart extends AbstractChart<
               ? this.renderVerticalLabels({
                   ...config,
                   labels: data.labels,
-                  paddingRight: paddingRight + 28,
+                  paddingRight: paddingRight + 4,
                   stackedBar,
                   paddingTop,
                   horizontalOffset: barWidth,
@@ -322,10 +330,12 @@ class StackedBarChart extends AbstractChart<
               data: data.data,
               border,
               colors: this.props.data.barColors,
+              selectedColors: this.props.data.selectedBarColors,
               paddingTop,
               onDataPointClick: onDataPointClick,
-              paddingRight: paddingRight + 20,
+              paddingRight: paddingRight + 4,
               stackedBar,
+              selectedIndex: selectedIndex,
               verticalLabelsHeightPercentage
             })}
           </G>
