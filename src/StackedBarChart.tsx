@@ -15,6 +15,8 @@ export interface StackedBarChartData {
   data: number[][];
   barColors: string[];
   selectedBarColors: string[];
+  estimatedBarColors: string[];
+  estimated: boolean[];
 }
 
 export interface StackedBarChartProps extends AbstractChartProps {
@@ -96,6 +98,8 @@ class StackedBarChart extends AbstractChart<
     border,
     colors,
     selectedColors,
+    estimatedColors,
+    estimated,
     stackedBar = false,
     selectedIndex,
     onDataPointClick,
@@ -112,6 +116,8 @@ class StackedBarChart extends AbstractChart<
     border: number;
     colors: string[];
     selectedColors: string[];
+    estimatedColors: string[];
+    estimated: boolean[];
     data: number[][];
     selectedIndex: number;
     onDataPointClick: StackedBarChartProps["onDataPointClick"];
@@ -146,14 +152,16 @@ class StackedBarChart extends AbstractChart<
             x: xC,
             y: y
           });
+        };
 
-          // onDataPointClick({
-          //   index: i,
-          //   value: x,
-          //   data,
-          //   x: cx,
-          //   y: cy
-          // });
+        let barColor = () => {
+          if (selectedIndex == undefined || selectedIndex == i) {
+            return estimated[i] == true
+              ? estimatedColors[z]
+              : selectedColors[z];
+          } else {
+            return colors[z];
+          }
         };
 
         ret.push(
@@ -166,11 +174,7 @@ class StackedBarChart extends AbstractChart<
             width={barWidth}
             height={h}
             onPress={onPress}
-            fill={
-              selectedIndex == undefined || selectedIndex == i
-                ? selectedColors[z]
-                : colors[z]
-            }
+            fill={barColor()}
           />
         );
 
@@ -331,6 +335,8 @@ class StackedBarChart extends AbstractChart<
               border,
               colors: this.props.data.barColors,
               selectedColors: this.props.data.selectedBarColors,
+              estimatedColors: this.props.data.estimatedBarColors,
+              estimated: this.props.data.estimated,
               paddingTop,
               onDataPointClick: onDataPointClick,
               paddingRight: paddingRight + 4,

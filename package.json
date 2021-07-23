@@ -1,6 +1,6 @@
 {
   "name": "react-native-charts-a2a",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "devDependencies": {
     "@types/react": "^16.9.38",
     "@types/react-native": "^0.62.13",
